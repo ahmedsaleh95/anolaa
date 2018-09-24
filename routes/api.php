@@ -36,7 +36,6 @@ Route::get('city/{id}', 'Api\UserController@city');
 Route::post('login', 'Api\UserController@login');
 Route::post('register', 'Api\UserController@register');
 
-gello
 
 
 
