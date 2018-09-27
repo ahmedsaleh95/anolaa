@@ -18,4 +18,7 @@ Route::get('/', function () {
     return 'hello laravel';
 });
 
-
+Route::get('qr',function(){
+	// return view('qr');
+	return QrCode::size(600)->generate('hello');
+});
