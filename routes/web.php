@@ -22,3 +22,12 @@ Route::get('qr',function(){
 	// return view('qr');
 	return QrCode::size(600)->generate('hello');
 });
+
+
+Route::post('/fire','api\UserController@fire');
+
+
+Route::get('/light', function () {
+    return view("light");
+});
+
