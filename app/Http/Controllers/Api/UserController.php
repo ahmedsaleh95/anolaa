@@ -11,6 +11,13 @@ use App\Area;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 // php artisan passport:install
+use Kreait\Firebase;
+ 
+use Kreait\Firebase\Factory;
+ 
+use Kreait\Firebase\ServiceAccount;
+ 
+use Kreait\Firebase\Database;
 
 class UserController extends BaseController
 {
@@ -154,6 +161,30 @@ class UserController extends BaseController
     {
         //
         return response()->json(['Areas'=> City::find($id)->areas]);
+    }
+
+    public function fire(Request $request)
+    {
+      $value = $request->value;
+      $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/real-time-notiy-a7456b46fe12.json');
+       
+      $firebase = (new Factory)
+       
+      ->withServiceAccount($serviceAccount)
+       
+      ->withDatabaseUri('https://real-time-notiy.firebaseio.com/')
+       
+      ->create();
+       
+      $database = $firebase->getDatabase();
+       
+      $newPost = $database
+       
+      // ->getReference('LEDStatus')->set(11);
+      ->getReference()->update(['LEDStatus' =>  (int)$value]);
+
+      return view('light');
+
     }
 
 }
