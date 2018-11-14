@@ -62,4 +62,12 @@ class User extends Authenticatable
         $result = User::whereRaw('email' , '=' , $email)->get();
         return $result;
     }
+
+
+        # user has many devices
+    // 
+    public function messages()
+    {
+        return $this->hasMany('App\Feedback');
+    }
 }

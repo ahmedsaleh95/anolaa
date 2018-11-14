@@ -151,7 +151,8 @@ class UserController extends BaseController
     public function country($id)
     {
         //
-        return response()->json(['Cities'=> Country::find($id)->cities]);
+        // return response()->json(['Cities'=> Country::find($id)->cities]);
+        return response()->json(['Cities'=> ]);
     }
 
     /**

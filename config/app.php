@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => env('APP_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -102,6 +102,8 @@ return [
     | will not be safe. Please do this before deploying an application!
     |
     */
+    
+    // 'key' => env('APP_KEY', base64_decode('F+ZNLGn4OUBPx2B8I/WG8uc72/GMLtFHc3L1aL1adRk=')),
 
     'key' => env('APP_KEY'),
 
@@ -227,7 +229,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Pusher' => Pusher\Pusher::class,
+        // 'Pusher' => Pusher\Pusher::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
 
     ],

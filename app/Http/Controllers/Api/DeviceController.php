@@ -37,6 +37,39 @@ class DeviceController extends Controller
         return response()->json(['device added'=> $user->devices()->save(Device::create($request->all()))], 200);
     }
 
+
+    /**
+     * Check Code Sent From User and Set User for nodemcu.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function checkqrcode(Request $request)
+    {
+        //
+        $user = Auth::user();
+        $device = Device::whereRaw('chipid = ?' , $request->qrcode)->get();
+        $fbdb = Device::firebaseRef();
+        $newPost = $fbdb
+        ->getReference('asz/'.$device[0]->chipId)->set(18);
+        $user->devices()->save($device[0]);
+        return response()->json(['device'=> "yes"]);
+    }
+
+    /**
+     * Check Code Sent From User and Set User for nodemcu.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function controldevice($id , Request $request)
+    {
+        //
+        $device = Device::find($id);
+        $fbdb = Device::firebaseRef();
+        $newPost = $fbdb
+        ->getReference()->update(['LEDStatus' =>  (int)$value]);
+        return response()->json(['Status'=> $value]);
+    }
+
     /**
      * Display the specified resource.
      *

@@ -19,7 +19,7 @@ class CreateDevicesTable extends Migration
             $table->string('description');
             $table->string('chipId')->unique();
             $table->string('qrcode');
-            $table->integer('user_id')->unique();
+            $table->integer('user_id');
             $table->integer('status');
             $table->string('device_photo_url')->default("img");
 

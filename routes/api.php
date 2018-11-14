@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use pragmaRX\Countries\package\Countries;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +26,10 @@ Route::middleware('auth:api')->delete('/destroy/{id}', 'Api\DeviceController@des
 Route::middleware('auth:api')->post('/update/{id}', 'Api\DeviceController@update');
 Route::middleware('auth:api')->post('/create', 'Api\DeviceController@create');
 
+Route::middleware('auth:api')->post('/qrcode', 'Api\DeviceController@checkqrcode');
+Route::middleware('auth:api')->post('/control/{device}', 'Api\DeviceController@controldevice');
+Route::middleware('auth:api')->post('/timer/create', 'Api\TimerController@create');
+
 
 
 
@@ -31,10 +38,21 @@ Route::get('countries', 'Api\UserController@countries');
 Route::get('country/{id}', 'Api\UserController@country');
 Route::get('city/{id}', 'Api\UserController@city');
 
+Route::get('mm', function ()
+{
+	$countries = new Countries();
+	echo $countries->where('cca2','IT')->first()->hydrateCurrencies()->currencies->EUR->coins->frequent->first();
+});
+
+
+
 
 
 Route::post('login', 'Api\UserController@login');
 Route::post('register', 'Api\UserController@register');
+
+Route::middleware('auth:api')->post('/feedback/create', 'Api\FeedbackController@create');
+
 
 
 
