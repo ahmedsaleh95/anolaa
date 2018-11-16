@@ -49,8 +49,10 @@ class DeviceController extends Controller
         $user = Auth::user();
         $device = Device::whereRaw('chipid = ?' , $request->qrcode)->get();
         $fbdb = Device::firebaseRef();
-        $newPost = $fbdb
-        ->getReference('asz/'.$device[0]->chipId)->set(18);
+        $newStatus = $fbdb
+        ->getReference($device[0]->chipId.'/status')->set("");
+        $newTimer = $fbdb
+        ->getReference($device[0]->chipId.'/timer')->set("");
         $user->devices()->save($device[0]);
         return response()->json(['device'=> "yes"]);
     }
