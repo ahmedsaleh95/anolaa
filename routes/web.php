@@ -5,6 +5,8 @@ use App\Events\StatusLiked;
 use Illuminate\Support\Str;
 use Webpatser\Uuid\Uuid;
 use Carbon\Carbon;
+
+use Khsing\World\World;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,4 +34,10 @@ Route::get('/time',function ()
 {
 	$c = Carbon::now();
 	return $c->addHour(2);
+});
+
+
+Route::get('c' , function ()
+{
+	World::Continents();
 });

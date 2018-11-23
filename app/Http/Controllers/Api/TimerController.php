@@ -39,7 +39,7 @@ class TimerController extends Controller
         $device = $user->devices()->find($request->id);
         $timer->devices()->attach($device->id);
         #add 2 hours to time
-        $dt= Carbon::parse($timer->alert, 'Europe/Paris')->addHour(2)->toDateTimeString();
+        $dt= Carbon::parse($timer->alert, 'Europe/Paris')->addHour(1)->toDateTimeString();
         $dtWithoutMiutes = substr($dt , 0 , strlen($dt) - 3);
         # send it through FB to arduino 
         $fbdb = Device::firebaseRef();

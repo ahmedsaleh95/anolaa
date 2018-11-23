@@ -180,6 +180,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+        Khsing\World\WorldServiceProvider::class,
 
     ],
 
