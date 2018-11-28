@@ -47,4 +47,10 @@ class Device extends Model
     {
         return $this->belongsToMany(Timer::class);
     }
+
+
+    public function schedules()
+    {
+        return $this->belongsToMany(Schedule::class);
+    }
 }

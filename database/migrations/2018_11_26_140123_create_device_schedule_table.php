@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTimersTable extends Migration
+class CreateDeviceScheduleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateTimersTable extends Migration
      */
     public function up()
     {
-        Schema::create('timers', function (Blueprint $table) {
+        //
+        Schema::create('device_schedule', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('start_at');
-            $table->integer('completed');
-            // $table->float('alertAfter');
+            $table->integer('device_id')->unsigned();
+            $table->integer('schedule_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -29,6 +29,7 @@ class CreateTimersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('timers');
+        //
+        Schema::dropIfExists('device_schedule');
     }
 }

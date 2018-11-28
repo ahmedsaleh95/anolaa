@@ -7,6 +7,7 @@ use Webpatser\Uuid\Uuid;
 use Carbon\Carbon;
 
 use Khsing\World\World;
+use Khsing\World\Models\Country;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,16 +29,4 @@ Route::post('/fire','api\UserController@fire');
 
 Route::get('/light', function () {
     return view("light");
-});
-
-Route::get('/time',function ()
-{
-	$c = Carbon::now();
-	return $c->addHour(2);
-});
-
-
-Route::get('c' , function ()
-{
-	World::Continents();
 });

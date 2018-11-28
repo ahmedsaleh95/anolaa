@@ -16,12 +16,12 @@ class CreateDevicesTable extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('description');
+            // $table->string('description');
             $table->string('chipId')->unique();
-            $table->string('qrcode');
+            // $table->string('qrcode');
             $table->integer('user_id');
             $table->integer('status');
-            $table->string('device_photo_url')->default("img");
+            // $table->string('device_photo_url')->default("img");
 
             $table->timestamps();
         });

@@ -32,11 +32,10 @@ class DeviceTableSeeder extends Seeder
 
         for ($i=1; $i < 4; $i++) {
             // $device1 = str_random(10);
-            $device1 = Uuid::generate()->string;
+            // $device1 = Uuid::generate()->string;
+            $device1 = uniqid(str_random(4));
             QrCode::size(400)->generate($device1 , 'public/qrcodes/Device'.$i.'.svg');   
-            Device::create([
-            'name'=> 'Device'.$i , 'description'=> 'office' , 'chipId'=> $device1 , 'qrcode'=> 'Device'.$i , 'user_id'=> 0 
-                 ]);
+            Device::create(['name'=> 'Device'.$i , 'chipId'=> $device1]);
         }
 
     }

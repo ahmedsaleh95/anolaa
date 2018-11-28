@@ -50,19 +50,6 @@ class User extends Authenticatable
         return $this->belongsToMany('App\City');
     }
 
-        //
-    #GET REGION OF USER
-    public function area()
-    {
-        return $this->belongsToMany('App\Area');
-    }
-
-    public function UserAlreadyExist($email)
-    {
-        $result = User::whereRaw('email' , '=' , $email)->get();
-        return $result;
-    }
-
 
         # user has many devices
     // 

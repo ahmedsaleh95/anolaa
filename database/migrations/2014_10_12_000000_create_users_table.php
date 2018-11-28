@@ -21,15 +21,9 @@ class CreateUsersTable extends Migration
             $table->date('date_of_birth');
             $table->integer('country_id');
             $table->integer('city_id');
-            $table->integer('area_id');
+            // $table->integer('area_id');
             $table->string('phone')->unique();
-            
-
-
-            $table->text('profile_photo_url');
-
-            // $table->string('salt')->unique();
-            // $table->string('uuid')->unique();
+            // $table->text('profile_photo_url');
 
             $table->rememberToken();
             $table->timestamps();

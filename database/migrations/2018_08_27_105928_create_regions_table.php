@@ -11,16 +11,16 @@ class CreateRegionsTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::create('areas', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('area')->unique();
-            $table->string('city_id');
+    // public function up()
+    // {
+    //     // Schema::create('areas', function (Blueprint $table) {
+    //     //     $table->increments('id');
+    //     //     $table->string('area')->unique();
+    //     //     $table->string('city_id');
 
-            $table->timestamps();
-        });
-    }
+    //     //     $table->timestamps();
+    //     // });
+    // }
 
     /**
      * Reverse the migrations.

@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Validator;
+use QrCode;
+use Illuminate\Support\Facades\Storage;
+use File;
 
 use App\User;
 use App\Device;
@@ -21,7 +25,13 @@ class DeviceController extends Controller
     {
         //
         $user = Auth::user();
-        return response()->json(['devices'=>$user->devices], 200);  
+        if (count( $devices = $user->devices) > 0) {
+            # code...
+            return response()->json(['devices'=>$devices]);
+        } else {
+            # code...
+            return response()->json(['error'=> "You have no devices"], 401);  
+        }       
     }
 
     /**
@@ -32,9 +42,22 @@ class DeviceController extends Controller
     public function create(Request $request)
     {
         //
-         // Eloquent::unguard();
+        $validator = Validator::make($request->all(), ['name' => 'required']);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
         $user = Auth::user();
-        return response()->json(['device added'=> $user->devices()->save(Device::create($request->all()))], 200);
+        $device1 = uniqid(str_random(4));
+        QrCode::size(400)->generate($device1 , '../public/qrcodes/'.$device1.'.svg');
+        $data = ["name"=> $request->name , "chipId"=> $device1];
+        if ($device = Device::create($data)) {
+            # code...
+            $user->devices()->save($device);
+        } else {
+            # code...
+            return response()->json(['error'=> "Device Not Added"] , 401);
+        }
+        return response()->json(['devices'=> $user->devices]);
     }
 
 
@@ -46,15 +69,26 @@ class DeviceController extends Controller
     public function checkqrcode(Request $request)
     {
         //
+        $validator = Validator::make($request->all(), ['qrcode' => 'required']);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+            }
         $user = Auth::user();
-        $device = Device::whereRaw('chipid = ?' , $request->qrcode)->get();
+        if ($device = Device::whereRaw('chipId = ?' , $request->qrcode)->first()) {
         $fbdb = Device::firebaseRef();
-        $newStatus = $fbdb
-        ->getReference($device[0]->chipId.'/status')->set("");
-        $newTimer = $fbdb
-        ->getReference($device[0]->chipId.'/timer')->set("");
-        $user->devices()->save($device[0]);
-        return response()->json(['device'=> "yes"]);
+        try {
+            $newStatus = $fbdb
+            ->getReference($device->chipId.'/status')->set("");
+            $newTimer = $fbdb
+            ->getReference($device->chipId.'/timer')->set("");  
+        } catch (\Exception $e) {
+            return response()->json(['error'=> $e->getMessage()] , 401);
+        }
+        $user->devices()->save($device);
+        return response()->json(['device'=> $user->devices]);
+        } else {
+            return response()->json(['error'=> "Cannot find this device"] , 401);
+        }
     }
 
     /**
@@ -65,11 +99,26 @@ class DeviceController extends Controller
     public function controldevice($id , Request $request)
     {
         //
-        $device = Device::find($id);
-        $fbdb = Device::firebaseRef();
-        $newPost = $fbdb
-        ->getReference()->update(['LEDStatus' =>  (int)$value]);
-        return response()->json(['Status'=> $value]);
+        $validator = Validator::make($request->all(), ['status' => 'required']);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+        $user = Auth::user();
+        if ($device = $user->devices()->find($id)) {
+            # code...
+            $fbdb = Device::firebaseRef();
+            try {
+            $newPost = $fbdb
+            ->getReference()->update([$device->chipId.'/status' =>  $request->status]);
+            $device->update($request->all());
+            } catch (\Exception $e) {
+                return response()->json(['error'=> $e->getMessage()] , 401);
+            }
+            return response()->json(['Status'=> $user->devices()->find($id)]);
+        } else {
+            # code...
+            return response()->json(['error'=> "Device Not Found"] , 401);
+        }
     }
 
     /**
@@ -82,7 +131,14 @@ class DeviceController extends Controller
     {
         //
         $user = Auth::user();
-        return response()->json(['device'=> $user->devices()->find($id)], 200);
+        if ($device = $user->devices()->find($id)) {
+            # code...
+            return response()->json(['device'=> $device]);
+        } else {
+            # code...
+            return response()->json(['error'=> "Not Found"] , 401);
+        }
+        
     }
 
     /**
@@ -95,9 +151,19 @@ class DeviceController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $validator = Validator::make($request->all(), ['name' => 'required|unique:devices']);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
          $user = Auth::user();
-         $device = $user->devices()->find($id);
-        return response()->json(['device updated'=> $device->update($request->all())], 200);
+         if ($device = $user->devices()->find($id)) {
+            # code...
+            $device->update($request->all());
+            return response()->json(['device'=> $user->devices]);
+        } else {
+            # code...
+            return response()->json(['error'=> "Not Found"] , 401);
+        }
     }
 
     /**
@@ -110,22 +176,14 @@ class DeviceController extends Controller
     {
         //
         $user = Auth::user();
-        return response()->json(['device deleted'=> $user->devices()->find($id)->delete()], 200);
-    }
-
-
-
-    public function twoLedTest()
-    {
-        $dev = Device::find(1);
-        echo $dev->status;
-    }
-
-    public function set2ledValues(Request $request)
-    {
-        $dev = Device::find(1);
-        $dev->status = $request->value;
-        $dev->save();
-        return response()->json(['done']);
+        if ($device = $user->devices()->find($id)) {
+            # code...
+            File::delete('qrcodes/'.$device->chipId.'.svg');
+            $device->delete();
+            return response()->json(['device'=> $user->devices]);
+        } else {
+            # code...
+            return response()->json(['error'=> " Device Not Found"] , 401);
+        }        
     }
 }

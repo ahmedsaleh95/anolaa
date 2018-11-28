@@ -12,10 +12,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
+        $this->call(DeviceTableSeeder::class);
 
-        $this->call(CountriesTableSeeder::class);
-        $this->call(CitiesTableSeeder::class);
-        $this->call(AreasTableSeeder::class);
+        // $this->call(CountriesTableSeeder::class);
+        // $this->call(CitiesTableSeeder::class);
+        // $this->call(AreasTableSeeder::class);
         // php artisan passport:install
     }
 }
