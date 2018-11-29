@@ -38,7 +38,7 @@ class UserController extends BaseController
         if ($validator->fails()) { 
             return response()->json(['error'=>$validator->errors()], 401);            
         }
-        $input = $request->all(); 
+        $input = $request->all();
         $input['password'] = bcrypt($input['password']); 
         // $user = User::create($input); 
         DB::beginTransaction();

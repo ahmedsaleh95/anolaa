@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Timer extends Model
 {
     //
-    protected $fillable = ['alert', 'alertAfter' , 'created_at', 'updated_at'];
     protected $table = 'timers';
-
+    protected $guarded = [];
+    
 
     public function devices()
     {

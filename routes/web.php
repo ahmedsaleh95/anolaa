@@ -30,3 +30,11 @@ Route::post('/fire','api\UserController@fire');
 Route::get('/light', function () {
     return view("light");
 });
+
+
+Route::get('t',function ($value='true')
+{
+	# code...
+	$retVal = ($value == "true") ? 1 : 0 ;
+	return $retVal;
+});

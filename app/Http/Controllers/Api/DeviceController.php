@@ -80,7 +80,11 @@ class DeviceController extends Controller
             $newStatus = $fbdb
             ->getReference($device->chipId.'/status')->set("");
             $newTimer = $fbdb
-            ->getReference($device->chipId.'/timer')->set("");  
+            ->getReference($device->chipId.'/timer')->set("");
+            $newSchedulerStart = $fbdb
+            ->getReference($device->chipId.'/scheduleStart')->set("");
+            $newSchedulerEnd = $fbdb
+            ->getReference($device->chipId.'/scheduleEnd')->set(""); 
         } catch (\Exception $e) {
             return response()->json(['error'=> $e->getMessage()] , 401);
         }
