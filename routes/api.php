@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Mail\welcome;
 
 
 /*
@@ -29,12 +30,13 @@ Route::middleware('auth:api')->post('/control/{device}', 'Api\DeviceController@c
 # Timer
 //---------
 Route::middleware('auth:api')->post('/timer/create/{id}', 'Api\TimerController@create');
-
+Route::middleware('auth:api')->post('timer/destroy/{id}', 'Api\TimerController@destroy');
 
 //---------
 # schedule
 //---------
 Route::middleware('auth:api')->post('/schedule/create/{id}', 'Api\ScheduleController@create');
+Route::middleware('auth:api')->post('schedule/destroy/{id}', 'Api\ScheduleController@destroy');
 
 //------------
 #History
@@ -57,5 +59,17 @@ Route::middleware('auth:api')->post('/feedback/create', 'Api\FeedbackController@
 
 
 
+Route::get('send',function ()
+{
+	# code...
+	// \Mail::to($r->email)->send(new welcome);
+	$data = array('name'=>"Virat Gandhi");
+      Mail::send('ahln', $data, function($message) {
+         $message->to('abc@gmail.com', 'Tutorials Point')->subject
+            ('Laravel HTML Testing Mail');
+         $message->from('xyz@gmail.com','Virat Gandhi');
+      });
+      echo "HTML Email Sent. Check your inbox.";
+});
 
 

@@ -25,13 +25,8 @@ class DeviceController extends Controller
     {
         //
         $user = Auth::user();
-        if (count( $devices = $user->devices) > 0) {
-            # code...
-            return response()->json(['devices'=>$devices]);
-        } else {
-            # code...
-            return response()->json(['error'=> "You have no devices"], 401);  
-        }       
+        $devices = $user->devices;
+        return response()->json(['devices'=>$devices]);       
     }
 
     /**
@@ -44,7 +39,7 @@ class DeviceController extends Controller
         //
         $validator = Validator::make($request->all(), ['name' => 'required']);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['notes'=>$validator->errors()], 500);            
         }
         $user = Auth::user();
         $device1 = uniqid(str_random(4));
@@ -55,7 +50,7 @@ class DeviceController extends Controller
             $user->devices()->save($device);
         } else {
             # code...
-            return response()->json(['error'=> "Device Not Added"] , 401);
+            return response()->json(['notes'=> "Device Not Added"] , 500);
         }
         return response()->json(['devices'=> $user->devices]);
     }
@@ -71,7 +66,7 @@ class DeviceController extends Controller
         //
         $validator = Validator::make($request->all(), ['qrcode' => 'required']);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['notes'=>$validator->errors()], 500);            
             }
         $user = Auth::user();
         if ($device = Device::whereRaw('chipId = ?' , $request->qrcode)->first()) {
@@ -86,12 +81,12 @@ class DeviceController extends Controller
             $newSchedulerEnd = $fbdb
             ->getReference($device->chipId.'/scheduleEnd')->set(""); 
         } catch (\Exception $e) {
-            return response()->json(['error'=> $e->getMessage()] , 401);
+            return response()->json(['notes'=> $e->getMessage()] , 400);
         }
         $user->devices()->save($device);
         return response()->json(['device'=> $user->devices]);
         } else {
-            return response()->json(['error'=> "Cannot find this device"] , 401);
+            return response()->json(['notes'=> "Cannot find this device"] , 403);
         }
     }
 
@@ -105,7 +100,7 @@ class DeviceController extends Controller
         //
         $validator = Validator::make($request->all(), ['status' => 'required']);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['notes'=>$validator->errors()], 500);            
         }
         $user = Auth::user();
         if ($device = $user->devices()->find($id)) {
@@ -113,15 +108,17 @@ class DeviceController extends Controller
             $fbdb = Device::firebaseRef();
             try {
             $newPost = $fbdb
-            ->getReference()->update([$device->chipId.'/status' =>  $request->status]);
+            // ->getReference()->update([$device->chipId.'/status' =>  $request->status]);
+            ->getReference($device->chipId.'/status')->set($request->status);
+
             $device->update($request->all());
             } catch (\Exception $e) {
-                return response()->json(['error'=> $e->getMessage()] , 401);
+                return response()->json(['notes'=> $e->getMessage()] , 400);
             }
             return response()->json(['Status'=> $user->devices()->find($id)]);
         } else {
             # code...
-            return response()->json(['error'=> "Device Not Found"] , 401);
+            return response()->json(['notes'=> "Device Not Found"] , 403);
         }
     }
 
@@ -140,7 +137,7 @@ class DeviceController extends Controller
             return response()->json(['device'=> $device]);
         } else {
             # code...
-            return response()->json(['error'=> "Not Found"] , 401);
+            return response()->json(['notes'=> "Have no access to this resource or not Found"] , 403);
         }
         
     }
@@ -155,9 +152,9 @@ class DeviceController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $validator = Validator::make($request->all(), ['name' => 'required|unique:devices']);
+        $validator = Validator::make($request->all(), ['name' => 'required']);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['notes'=>$validator->errors()], 500);            
         }
          $user = Auth::user();
          if ($device = $user->devices()->find($id)) {
@@ -166,7 +163,7 @@ class DeviceController extends Controller
             return response()->json(['device'=> $user->devices]);
         } else {
             # code...
-            return response()->json(['error'=> "Not Found"] , 401);
+            return response()->json(['error'=> "Invalid Device or Not Found"] , 403);
         }
     }
 
@@ -187,7 +184,7 @@ class DeviceController extends Controller
             return response()->json(['device'=> $user->devices]);
         } else {
             # code...
-            return response()->json(['error'=> " Device Not Found"] , 401);
+            return response()->json(['notes'=> " Have no access to that device or Not Found"] , 403);
         }        
     }
 }

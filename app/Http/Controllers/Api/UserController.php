@@ -7,6 +7,14 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+
+use ArrayObject;
+use JsonSerializable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Renderable;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
+
 
 use Validator;
 use Khsing\World\World;
@@ -26,6 +34,7 @@ class UserController extends BaseController
     public function register(Request $request)
     {
         //
+        $obj = new BaseController();
         $validator = Validator::make($request->all(), [ 
             'name' => 'required', 
             'email' => 'required|email|unique:Users', 
@@ -44,8 +53,7 @@ class UserController extends BaseController
         DB::beginTransaction();
         if ($user = User::create($input)) {
         #AccessToken
-        $success['token'] =  $user->createToken('User')-> accessToken; 
-        $success['name'] =  $user->name;
+        $token = User::grantToken($request);
         #Country and City
             if ($country = Country::where('callingcode', $user->country_id)->first()) {
                 $countryName['countryName'] = $country->name;
@@ -53,7 +61,8 @@ class UserController extends BaseController
                     $cityName['cityName'] = $city->name;
                     $fullUser = array_merge($user->toArray() , $countryName ,$cityName);
                     DB::commit();
-                    return response()->json(['user'=> $fullUser , 'token'=>$success['token']]);
+                    return response()->json([
+                        'user'=> $fullUser , 'token'=>json_decode($token->getcontent())]);
                 } else {
                     DB::rollBack();
                     return response()->json(['error'=> "no Citries found"] , 401);
@@ -72,16 +81,17 @@ class UserController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function login()
+    public function login(Request $request)
     {
         //
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
-            $success['token'] =  $user->createToken('userLogin')-> accessToken; 
-            return response()->json(['token'=>$success['token'] , "user"=> $user]); 
+            // $success['token'] =  $user->createToken('userLogin')-> accessToken;
+            $token = User::grantToken($request);
+            return response()->json(['token'=>json_decode($token->getcontent()) , "user"=> $user]); 
         } 
-        else{ 
-            return response()->json(['error'=>'Unauthorised'], 401); 
+        else{
+            return response()->json(['error'=>'This user not found']); 
         }
     }
 

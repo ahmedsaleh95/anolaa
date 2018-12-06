@@ -30,7 +30,7 @@ class DeviceTableSeeder extends Seeder
      //    ]);
 
 
-        for ($i=1; $i < 4; $i++) {
+        for ($i=4; $i < 9; $i++) {
             // $device1 = str_random(10);
             // $device1 = Uuid::generate()->string;
             $device1 = uniqid(str_random(4));

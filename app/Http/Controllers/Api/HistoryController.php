@@ -23,10 +23,13 @@ class HistoryController extends Controller
     {
         //
         $user = Auth::user();
+        $timerData = [];
+        $ScheduleData = [];
         if ($device = $user->devices()->find($id)) {
             # code...
             $timers = $device->timers()->orderBy('start_at', 'desc')->get();
             $schedules = $device->schedules()->orderBy('start_at', 'desc')->get();
+            // dd($device->schedules);schedules
             if ((count($timers) > 0 && count($schedules) > 0) ||(count($timers) > 0 || count($schedules) > 0)) {
                 # code...
                 foreach ($timers as $timer) {
@@ -34,7 +37,7 @@ class HistoryController extends Controller
                     $type['type'] = "timer";
                     $status['status'] = ($timer->completed == 1) ? "completed" : "upcoming" ;
                     $from['from'] =[
-                        'date'=> substr($timer->start_at , 0 , strlen($timer->start_at) - 3),
+                        'date'=> substr($timer->start_at , 0 , strlen($timer->start_at) - 9),
                         'time'=> substr($timer->start_at , 11 , strlen($timer->start_at)),
                     ];
                     $timerData []= array_merge($type , $status , $from , $timer->toArray());
@@ -44,24 +47,24 @@ class HistoryController extends Controller
                     $type['type'] = "Schedule";
                     $status['status'] = ($timer->completed == 1) ? "completed" : "upcoming" ;
                     $from['from'] =[
-                        'date'=> substr($Schedule->start_at , 0 , strlen($Schedule->start_at) - 3),
+                        'date'=> substr($Schedule->start_at , 0 , strlen($Schedule->start_at) - 9),
                         'time'=> substr($Schedule->start_at , 11 , strlen($Schedule->start_at)),
                     ];
                     $to['to'] =[
-                        'date'=> substr($Schedule->end_at , 0 , strlen($Schedule->end_at) - 3),
+                        'date'=> substr($Schedule->end_at , 0 , strlen($Schedule->end_at) - 9),
                         'time'=> substr($Schedule->end_at , 11 , strlen($Schedule->end_at)),
                     ];
-                    $ScheduleData []= array_merge($type , $status , $from , $Schedule->toArray());
+                    $ScheduleData []= array_merge($type , $status , $from , $to , $Schedule->toArray());
                 }
                 $data = array_merge($timerData , $ScheduleData);
                 return response()->json(['data'=> $data]);
             } else {
                 # code...
-                return response()->json(['error'=> "No Timers or schedules Found"] , 401);
+                return response()->json(['notes'=> "No Timers or schedules Found"] , 403);
             }
         } else {
             # code...
-            return response()->json(['error'=> "Not Found"] , 401);
+            return response()->json(['notes'=> "Device Not Found"] , 403);
         }
     }
 }

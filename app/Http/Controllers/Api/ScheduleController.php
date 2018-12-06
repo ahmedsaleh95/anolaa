@@ -32,7 +32,7 @@ class ScheduleController extends Controller
             'weekly' => 'required',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);          
+            return response()->json(['notes'=>$validator->errors()], 500);          
         }
         $input = $request->all();
         $input['weekly'] = ($input['weekly'] == "true") ? 1 : 0 ;
@@ -57,28 +57,63 @@ class ScheduleController extends Controller
                 $fbdb = Device::firebaseRef();
                 try {
                     $newPost1 = $fbdb
-                    ->getReference()->update([
-                        $device->chipId.'/scheduleStart' => $dt_start_WithoutMiutes
-                    ]);
+                    // ->getReference()->update([
+                    //     $device->chipId.'/scheduleStart' => $dt_start_WithoutMiutes
+                    // ]);
+                    ->getReference($device->chipId.'/scheduleStart')->set($dt_start_WithoutMiutes);
                     $newPost2 = $fbdb
-                    ->getReference()->update([
-                        $device->chipId.'/scheduleEnd' => $dt_end_WithoutMiutes
-                    ]);
+                    // ->getReference()->update([
+                    //     $device->chipId.'/scheduleEnd' => $dt_end_WithoutMiutes
+                    // ]);
+                    ->getReference($device->chipId.'/scheduleEnd')->set($dt_end_WithoutMiutes);
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    return response()->json(['error'=> $e->getMessage()] , 401);
+                    return response()->json(['notes'=> $e->getMessage()] , 400);
                 }
                 DB::commit();
                 return response()->json(["data"=> $device->schedules]);
             } else {
                 # code...
                 DB::rollBack();
-                return response()->json(['error'=> "Not Found"] , 401);
+                return response()->json(['notes'=> "Device Not Found"] , 403);
             }
         } else {
             # code...
-            return response()->json(['error'=> "schedule not set"], 401);           
+            return response()->json(['notes'=> "schedule not set"], 403);           
         }        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id ,Request $request)
+    {
+        //
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [ 
+            'device_id' => 'required',
+        ]);
+        if ($validator->fails()) { 
+            return response()->json(['notes'=>$validator->errors()], 500);          
+        }
+        if ($device = $user->devices()->find($request->device_id)) {
+            # code...
+            if ($schedule = $device->schedules()->find($id)) {
+                # code...
+                $schedule->devices()->detach();
+                $schedule->delete();
+                return response()->json(['schedules'=> $device->schedules]);
+            } else {
+                # code...
+                return response()->json(['notes'=> " schedule not found "] , 403);
+            }
+        } else {
+            # code...
+            return response()->json(['notes'=> " Device Not Found"] , 403);
+        }      
     }
 
 }
