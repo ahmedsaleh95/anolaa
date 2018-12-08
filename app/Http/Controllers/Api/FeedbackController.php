@@ -25,8 +25,15 @@ class FeedbackController extends Controller
         $user = Auth::user();
         $validator = Validator::make($request->all(), ['message' => 'required']);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error'=>$validator->errors()], 500);
         }
-        return response()->json(['message'=> $user->messages()->save(Feedback::create($request->all()))], 200);
+        if ($feedback = Feedback::create($request->all())) {
+            # code...
+            $user->messages()->save($feedback);
+            return response()->json(['message'=> $feedback]);
+        } else {
+            # code...
+            return response()->json(['error'=> "message not added"] , 401);
+        }        
     }
 }

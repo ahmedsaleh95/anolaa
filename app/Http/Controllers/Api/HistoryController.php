@@ -27,8 +27,8 @@ class HistoryController extends Controller
         $ScheduleData = [];
         if ($device = $user->devices()->find($id)) {
             # code...
-            $timers = $device->timers()->orderBy('start_at', 'desc')->get();
-            $schedules = $device->schedules()->orderBy('start_at', 'desc')->get();
+            $timers = $device->timers()->orderBy('start_at', 'asc')->get();
+            $schedules = $device->schedules()->orderBy('start_at', 'asc')->get();
             // dd($device->schedules);schedules
             if ((count($timers) > 0 && count($schedules) > 0) ||(count($timers) > 0 || count($schedules) > 0)) {
                 # code...
@@ -44,7 +44,7 @@ class HistoryController extends Controller
                 }
                 foreach ($schedules as $Schedule) {
                     # code...
-                    $type['type'] = "Schedule";
+                    $type['type'] = "schedule";
                     $status['status'] = ($timer->completed == 1) ? "completed" : "upcoming" ;
                     $from['from'] =[
                         'date'=> substr($Schedule->start_at , 0 , strlen($Schedule->start_at) - 9),
@@ -60,11 +60,11 @@ class HistoryController extends Controller
                 return response()->json(['data'=> $data]);
             } else {
                 # code...
-                return response()->json(['notes'=> "No Timers or schedules Found"] , 403);
+                return response()->json(['error'=> "No Timers or schedules Found"] , 403);
             }
         } else {
             # code...
-            return response()->json(['notes'=> "Device Not Found"] , 403);
+            return response()->json(['error'=> "Device Not Found"] , 403);
         }
     }
 }

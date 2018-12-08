@@ -27,12 +27,12 @@ class ScheduleController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [ 
-            'start_at' => 'required|date|date_format:Y-m-d H:i:s',
-            'end_at' => 'required|date|date_format:Y-m-d H:i:s',
+            'start_at' => 'required|date|date_format:Y-m-d H:i',
+            'end_at' => 'required|date|date_format:Y-m-d H:i',
             'weekly' => 'required',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['notes'=>$validator->errors()], 500);          
+            return response()->json(['error'=>$validator->errors()], 500);          
         }
         $input = $request->all();
         $input['weekly'] = ($input['weekly'] == "true") ? 1 : 0 ;
@@ -68,18 +68,18 @@ class ScheduleController extends Controller
                     ->getReference($device->chipId.'/scheduleEnd')->set($dt_end_WithoutMiutes);
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    return response()->json(['notes'=> $e->getMessage()] , 400);
+                    return response()->json(['error'=> $e->getMessage()] , 400);
                 }
                 DB::commit();
                 return response()->json(["data"=> $device->schedules]);
             } else {
                 # code...
                 DB::rollBack();
-                return response()->json(['notes'=> "Device Not Found"] , 403);
+                return response()->json(['error'=> "Device Not Found"] , 403);
             }
         } else {
             # code...
-            return response()->json(['notes'=> "schedule not set"], 403);           
+            return response()->json(['error'=> "schedule not set"], 403);           
         }        
     }
 
@@ -97,22 +97,22 @@ class ScheduleController extends Controller
             'device_id' => 'required',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['notes'=>$validator->errors()], 500);          
+            return response()->json(['error'=>$validator->errors()], 500);          
         }
-        if ($device = $user->devices()->find($request->device_id)) {
+        if ($device = $user->devices()->first()->find($request->device_id)) {
             # code...
             if ($schedule = $device->schedules()->find($id)) {
                 # code...
                 $schedule->devices()->detach();
                 $schedule->delete();
-                return response()->json(['schedules'=> $device->schedules]);
+                return response()->json(['data'=> $device->schedules]);
             } else {
                 # code...
-                return response()->json(['notes'=> " schedule not found "] , 403);
+                return response()->json(['error'=> " schedule not found "] , 403);
             }
         } else {
             # code...
-            return response()->json(['notes'=> " Device Not Found"] , 403);
+            return response()->json(['error'=> " Device Not Found"] , 403);
         }      
     }
 

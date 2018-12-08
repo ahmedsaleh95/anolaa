@@ -7,4 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Mailcode extends Model
 {
     //
+    protected $guarded = [];
+    
 }

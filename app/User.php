@@ -89,4 +89,16 @@ class User extends Authenticatable
         return $response;
         // return  ["d"=> json_decode($response->getContent()) ,"data"=> $u];
     }
+
+
+    // public function sendMail( $request)
+    // {
+    //     # code...
+    //     $data = array('code'=>"Virat Gandhi");
+    //     \Mail::send('ahln', $data, function($message) {
+    //     $message->to($request->email , $request->name)->subject
+    //         ('Verfication Code');
+    //     $message->from('info@anolaa.com','Anolaa');
+    //           });
+    // }
 }

@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use App\Mail\welcome;
+use App\Device;
+
 
 
 /*
@@ -56,20 +58,28 @@ Route::middleware('auth:api')->post('/user/update', 'Api\UserController@update')
 # feedback related to user
 //---------------------------
 Route::middleware('auth:api')->post('/feedback/create', 'Api\FeedbackController@create');
+//---------------------------
+# verfiy account
+//---------------------------
+Route::post('/verify', 'Api\Mailverfication@index');
+#refdresh token
+Route::post('/user/auth', 'Api\UserController@refreshToken');
 
 
 
-Route::get('send',function ()
+
+Route::post('send',function ()
 {
 	# code...
 	// \Mail::to($r->email)->send(new welcome);
-	$data = array('name'=>"Virat Gandhi");
-      Mail::send('ahln', $data, function($message) {
-         $message->to('abc@gmail.com', 'Tutorials Point')->subject
-            ('Laravel HTML Testing Mail');
-         $message->from('xyz@gmail.com','Virat Gandhi');
-      });
-      echo "HTML Email Sent. Check your inbox.";
+	// $data = array('name'=>"Virat Gandhi");
+ //      Mail::send('ahln', $data, function($message) {
+ //         $message->to('abc@gmail.com', 'Tutorials Point')->subject
+ //            ('Laravel HTML Testing Mail');
+ //         $message->from('xyz@gmail.com','Virat Gandhi');
+ //      });
+ //      echo "HTML Email Sent. Check your inbox.";
+	return $random_hash = bin2hex(random_bytes(2));
 });
 
 

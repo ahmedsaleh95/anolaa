@@ -27,10 +27,10 @@ class TimerController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [ 
-            'start_at' => 'required|date|date_format:Y-m-d H:i:s',
+            'start_at' => 'required|date|date_format:Y-m-d H:i',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['notes'=>$validator->errors()], 500);          
+            return response()->json(['error'=>$validator->errors()], 500);          
         }
         # save timer in DB and set it to device
         if ($timer = Timer::create($request->all())) {
@@ -52,16 +52,16 @@ class TimerController extends Controller
                     ->getReference($device->chipId.'/timer')->set($dtWithoutMiutes);
 
                 } catch (\Exception $e) {
-                    return response()->json(['notes'=> $e->getMessage()] , 400);
+                    return response()->json(['error'=> $e->getMessage()] , 400);
                 }
                 return response()->json(["data"=> $device->timers]);
             } else {
                 # code...
-                return response()->json(['notes'=> " device Not Found"] , 403);
+                return response()->json(['error'=> " device Not Found"] , 403);
             }
         } else {
             # code...
-            return response()->json(['notes'=> "Timer not set"], 403);           
+            return response()->json(['error'=> "Timer not set"], 403);           
         }        
     }
 
@@ -79,22 +79,22 @@ class TimerController extends Controller
             'device_id' => 'required',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['notes'=>$validator->errors()], 500);          
+            return response()->json(['error'=>$validator->errors()], 500);          
         }
-        if ($device = $user->devices()->find($request->device_id)) {
+        if ($device = $user->devices()->first()->find($request->device_id)) {
             # code...
             if ($timer = $device->timers()->find($id)) {
                 # code...
                 $timer->devices()->detach();
                 $timer->delete();
-                return response()->json(['timers'=> $device->timers]);
+                return response()->json(['data'=> $device->timers]);
             } else {
                 # code...
-                return response()->json(['notes'=> " Timer not found "] , 403);
+                return response()->json(['error'=> " Timer not found "] , 403);
             }
         } else {
             # code...
-            return response()->json(['notes'=> " Device Not Found"] , 403);
+            return response()->json(['error'=> " Device Not Found"] , 403);
         }      
     }
 }
