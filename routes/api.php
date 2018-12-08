@@ -62,6 +62,8 @@ Route::middleware('auth:api')->post('/feedback/create', 'Api\FeedbackController@
 # verfiy account
 //---------------------------
 Route::post('/verify', 'Api\Mailverfication@index');
+Route::post('/mail', 'Api\Mailverfication@send_mail');
+
 #refdresh token
 Route::post('/user/auth', 'Api\UserController@refreshToken');
 
@@ -79,7 +81,10 @@ Route::post('send',function ()
  //         $message->from('xyz@gmail.com','Virat Gandhi');
  //      });
  //      echo "HTML Email Sent. Check your inbox.";
-	return $random_hash = bin2hex(random_bytes(2));
+	// return $random_hash = bin2hex(random_bytes(2));
+	// return random_int();
+	// return 
+
 });
 
 

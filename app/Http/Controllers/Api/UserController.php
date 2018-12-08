@@ -61,27 +61,7 @@ class UserController extends BaseController
                 $countryName['countryName'] = $country->name;
                 if ($city = $country->children()->find($user->city_id)) {
                     $cityName['cityName'] = $city->name;
-                    $fullUser = array_merge($user->toArray() , $countryName ,$cityName);
-                    try {
-                        $random_hash = bin2hex(random_bytes(2));
-                        $data = array('code'=>$random_hash);
-                        \Mail::send('ahln', $data, function($message) {
-                        $message->to(request('email') , request('name'))->subject
-                                ('Verfication Code');
-                        $message->from('info@anolaa.com','Anolaa');
-                          });
-                    } catch (\Exception $e) {
-                        DB::rollBack();
-                        return response()->json(['notes'=> $e->getMessage()] , 400);
-                    }
-                    if (!Mailcode::create([
-                        'email'=>request('email'),
-                        'code'=>$random_hash,
-                    ])) {
-                        # code...
-                        return response()->json(['error'=> "Code for verfication not saved"] , 401);
-                    }
-                    
+                    $fullUser = array_merge($user->toArray() , $countryName ,$cityName); 
                     DB::commit();
                     return response()->json([
                         'user'=> $fullUser , 'token'=>json_decode($token->getcontent())]);
