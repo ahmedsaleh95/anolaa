@@ -109,7 +109,7 @@ class DeviceController extends Controller
             try {
             $newPost = $fbdb
             // ->getReference()->update([$device->chipId.'/status' =>  $request->status]);
-            ->getReference($device->chipId.'/status')->set($request->status);
+            ->getReference($device->chipId.'/status')->set((string)$request->status);
 
             $device->update($request->all());
             } catch (\Exception $e) {

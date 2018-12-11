@@ -30,7 +30,7 @@ class Mailverfication extends Controller
        // return $data;
         if(count($data) > 0)
         {
-            // $data->delete();
+            $data->first()->delete();
             return response()->json(['data'=> "verified"]);
         }
         else{

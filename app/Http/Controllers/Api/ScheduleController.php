@@ -27,8 +27,8 @@ class ScheduleController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [ 
-            'start_at' => 'required|date|date_format:Y-m-d H:i',
-            'end_at' => 'required|date|date_format:Y-m-d H:i',
+            'start_at' => 'required|date|date_format:Y-m-d H:i|before:end_at|after:today',
+            'end_at' => 'required|date|date_format:Y-m-d H:i|after:start_at',
             'weekly' => 'required',
         ]);
         if ($validator->fails()) { 

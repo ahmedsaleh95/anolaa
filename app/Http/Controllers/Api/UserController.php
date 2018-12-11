@@ -118,15 +118,15 @@ class UserController extends BaseController
     public function update(Request $request)
     {
         //
-        $validator = Validator::make($request->all(), [  
-            'email' => 'email|unique:Users', 
-            'password' => 'min:8',
-            'date_of_birth' => 'date|date_format:Y-m-d',
-            'phone' => 'unique:Users|min:12|max:12',
-        ]);
-        if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
-        }
+        // $validator = Validator::make($request->all(), [  
+        //     'email' => 'email|unique:Users', 
+        //     'password' => 'min:8',
+        //     'date_of_birth' => 'date|date_format:Y-m-d',
+        //     'phone' => 'unique:Users|min:12|max:12',
+        // ]);
+        // if ($validator->fails()) { 
+        //     return response()->json(['error'=>$validator->errors()], 401);            
+        // }
         $user = Auth::user();
         $input = $request->all(); 
         if ($request->has('country_id') && $request->has('city_id')) {
