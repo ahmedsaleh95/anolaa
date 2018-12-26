@@ -21,6 +21,9 @@ use Khsing\World\Models\Country;
 
 
 Route::get('/', function () {
+	$request = Request::create('https://google.com', 'GET');
+    return app()->handle($request);
+        // return $response;
     return 'hello laravel';
 });
 
@@ -36,5 +39,17 @@ Route::get('t',function ($value='true')
 {
 	# code...
 	$retVal = ($value == "true") ? 1 : 0 ;
+	return Carbon::now();
 	return $retVal;
+});
+
+Route::get('s',function ()
+{
+	# code...
+	Mail::send('anolaa',  ['hello'=>'no'] ,function($message) {
+            $message->to('ahmedsaleh_95@yahoo.com' , "anaa")->subject
+                    ('Verfication Code');
+            $message->from('info@anolaa.com','Anolaa');
+              });
+
 });

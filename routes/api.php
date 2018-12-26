@@ -22,7 +22,7 @@ use App\Device;
 //-----------
 Route::middleware('auth:api')->get('/index', 'Api\DeviceController@index');
 Route::middleware('auth:api')->get('/show/{id}', 'Api\DeviceController@show');
-Route::middleware('auth:api')->delete('/destroy/{id}', 'Api\DeviceController@destroy');
+Route::middleware('auth:api')->post('/destroy/{id}', 'Api\DeviceController@destroy');
 Route::middleware('auth:api')->post('/update/{id}', 'Api\DeviceController@update');
 Route::middleware('auth:api')->post('/create', 'Api\DeviceController@create');
 
@@ -66,6 +66,8 @@ Route::post('/mail', 'Api\Mailverfication@send_mail');
 
 #refdresh token
 Route::post('/user/auth', 'Api\UserController@refreshToken');
+#handling Led Status from Arduino Timer
+Route::get('/timer/turn', 'Api\ArduinoController@timerTurn');
 
 
 

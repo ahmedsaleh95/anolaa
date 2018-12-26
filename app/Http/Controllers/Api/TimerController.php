@@ -27,7 +27,8 @@ class TimerController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [ 
-            'start_at' => 'required|date|date_format:Y-m-d H:i',
+            'start_at' => 'required|date|date_format:Y-m-d H:i|after:'.Carbon::now()
+            ->addHours(2),
         ]);
         if ($validator->fails()) { 
             return response()->json(['error'=>$validator->errors()], 500);          

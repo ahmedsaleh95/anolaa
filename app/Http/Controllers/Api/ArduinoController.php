@@ -20,11 +20,16 @@ class ArduinoController extends Controller
     public function timerTurn(Request $request)
     {
     	if ($device = Device::whereRaw('chipId = ?' , $request->qrcode)->first()) {
-    		$timers = $device->timers()->where('completed' , '=' , 0)->orderBy('start_at', 'asc')->take(2)->get();
-    		// dd($timers);
+    		$timers = $device->timers()->where([
+    			['completed' , '=' , 0],
+    			['start_at' , '>=' , Carbon::now()->addHours(2)],
+    				])->orderBy('start_at', 'asc')->take(2)->get();
+    		// return ([$timers , Carbon::now()]);
     		if (count($timers) > 1) {
     			# code... set timer to empty string in firebase and update 
     			$timers->first()->update(['completed' => 1]);
+    			$device->update(['status' => $request->status]);
+
     			$dt= Carbon::parse($timers->last()->start_at, 'Europe/Paris')
                 ->addHour(1)
                 ->toDateTimeString();
@@ -41,6 +46,7 @@ class ArduinoController extends Controller
     		} else {
     			# code...
     			$timers->first()->update(['completed' => 1]);
+    			$device->update(['status' => $request->status]);
     		}
         return response()->json(["ststus"=> "Timer ".$timers->first()->start_at." Successfully"]);
         } else {
